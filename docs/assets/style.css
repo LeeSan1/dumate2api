@@ -178,67 +178,6 @@ button {
   margin: 0 auto;
 }
 
-.critical-notice {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 16px;
-  margin: 24px 0 0;
-  padding: 20px 22px;
-  border: 1px solid color-mix(in srgb, var(--warning) 36%, var(--line));
-  border-left: 4px solid var(--warning);
-  border-radius: 14px;
-  background: var(--warning-bg);
-  box-shadow: 0 12px 34px rgba(178, 106, 0, 0.08);
-}
-
-.critical-icon {
-  display: grid;
-  width: 30px;
-  height: 30px;
-  place-items: center;
-  border-radius: 9px;
-  color: #fff;
-  background: var(--warning);
-  font-size: 18px;
-  font-weight: 900;
-}
-
-.critical-notice h2 {
-  margin: 0 0 10px;
-  color: var(--warning);
-  font-size: 19px;
-  letter-spacing: -0.02em;
-}
-
-.critical-notice ul {
-  display: grid;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  color: var(--muted);
-}
-
-.critical-notice li {
-  position: relative;
-  padding-left: 17px;
-}
-
-.critical-notice li::before {
-  position: absolute;
-  top: 0.76em;
-  left: 0;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--warning);
-  content: "";
-}
-
-.critical-notice strong {
-  color: var(--text);
-}
-
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(330px, 0.9fr);
@@ -1035,13 +974,6 @@ tbody tr:last-child td {
 
   h1 {
     font-size: clamp(40px, 14vw, 58px);
-  }
-
-  .critical-notice {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    margin-top: 16px;
-    padding: 17px;
   }
 
   .hero-lead {
