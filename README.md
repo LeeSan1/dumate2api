@@ -1,8 +1,8 @@
-# 百度搭子 DuMate 2API
+# DuMate 反代
 
-把已登录的百度搭子 DuMate 桌面端变成本机 OpenAI 兼容 API，供 OpenClaw、Magpie、Codex、脚本和 OpenAI SDK 使用。
+把已登录的 DuMate 桌面端本机接口转换为 OpenAI 兼容 `/v1`。OpenClaw、Magpie、Codex、脚本和 OpenAI SDK 可直接接入。
 
-[**在线教程**](https://LeeSan1.github.io/dumate2api/) · [快速开始](#三分钟快速开始) · [模型](#模型映射) · [排错](#常见问题)
+[**在线教程**](https://LeeSan1.github.io/dumate2api/) · [快速开始](#快速开始) · [模型](#模型映射) · [排错](#常见问题)
 
 > 本项目复用本机桌面客户端的登录态，不包含账户密钥，不绕过登录或会员权限。代理默认只监听 `127.0.0.1`，请按 DuMate 服务条款使用。
 
@@ -12,7 +12,7 @@
 客户端 / OpenAI SDK
         │  http://127.0.0.1:3066/v1
         ▼
-DuMate OpenAI Proxy
+DuMate 反代
         │  动态发现本机端口与临时密钥
         ▼
 DuMate 桌面端 → /api/qianfanproxy/v1
@@ -20,7 +20,7 @@ DuMate 桌面端 → /api/qianfanproxy/v1
 
 代理会自动查找本机正在运行的 `dumate-main-server`，读取其动态端口和 `DUMATE_INAPP_KEY`，再把标准 OpenAI 请求转发到 DuMate 的本地兼容接口。临时密钥只留在内存里，不写入文件，也不会出现在日志中。
 
-## 三分钟快速开始
+## 快速开始
 
 要求：
 
