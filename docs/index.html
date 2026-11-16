@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="把已登录的百度搭子 DuMate 桌面端变成本机 OpenAI 兼容 API，支持 OpenClaw、Magpie、Codex 和 OpenAI SDK。">
+  <meta name="theme-color" content="#08111d">
+  <meta property="og:title" content="百度搭子 DuMate 2API">
+  <meta property="og:description" content="保留 DuMate 桌面端登录态，用标准 /v1/chat/completions 在本机调用四个模型。">
+  <meta property="og:type" content="website">
+  <title>百度搭子 DuMate 2API · 本地 OpenAI 兼容代理</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="site-nav" aria-label="主导航">
+      <a class="brand" href="#top" aria-label="DuMate 2API 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <path d="M5 7.5 8.2 3v4.5h7.6V3L19 7.5v7.2a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5V7.5Z"/>
+            <path d="M8.5 12.2h.01M15.5 12.2h.01M9 15.2c1.8 1.4 4.2 1.4 6 0"/>
+          </svg>
+        </span>
+        <span>DuMate 2API</span>
+      </a>
+      <div class="nav-links" data-nav-links>
+        <a href="#quick-start">快速开始</a>
+        <a href="#client">客户端接入</a>
+        <a href="#models">模型</a>
+        <a href="#troubleshooting">排错</a>
+      </div>
+      <div class="nav-actions">
+        <a class="icon-button" href="https://github.com/LeeSan1/dumate2api" aria-label="GitHub 仓库">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .7a11.5 11.5 0 0 0-3.64 22.4c.58.1.8-.25.8-.56v-2.2c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.74-1.56-2.57-.3-5.27-1.28-5.27-5.74 0-1.26.46-2.3 1.2-3.1-.12-.3-.52-1.48.12-3.08 0 0 .97-.3 3.18 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.2 3.17-1.2.64 1.6.24 2.78.12 3.08.75.8 1.2 1.84 1.2 3.1 0 4.47-2.7 5.43-5.28 5.73.42.36.8 1.08.8 2.18v3.25c0 .3.2.67.8.56A11.5 11.5 0 0 0 12 .7Z"/></svg>
+        </a>
+        <button class="icon-button" type="button" data-theme-toggle aria-label="切换主题"></button>
+        <button class="menu-button" type="button" data-menu-toggle aria-label="打开导航" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="page">
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <div class="eyebrow">Local-first · OpenAI compatible</div>
+          <h1 id="hero-title">把百度搭子<br><span class="gradient">变成 API</span></h1>
+          <p class="hero-lead">保留 DuMate 桌面端登录态，在本机暴露标准 <span class="inline-code">/v1</span> 接口。OpenClaw、Magpie、Codex、脚本和 OpenAI SDK 都能直接接入。</p>
+          <div class="badges" aria-label="项目属性">
+            <span class="badge">Node 18+</span>
+            <span class="badge">macOS / Windows</span>
+            <span class="badge">0 dependencies</span>
+            <span class="badge">Local only</span>
+            <span class="badge">MIT</span>
+          </div>
+          <div class="hero-actions">
+            <a class="button primary" href="#quick-start">
+              三分钟开始
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m9 5 7 7-7 7"/></svg>
+            </a>
+            <a class="button" href="https://github.com/LeeSan1/dumate2api">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .7a11.5 11.5 0 0 0-3.64 22.4c.58.1.8-.25.8-.56v-2.2c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.74-1.56-2.57-.3-5.27-1.28-5.27-5.74 0-1.26.46-2.3 1.2-3.1-.12-.3-.52-1.48.12-3.08 0 0 .97-.3 3.18 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.2 3.17-1.2.64 1.6.24 2.78.12 3.08.75.8 1.2 1.84 1.2 3.1 0 4.47-2.7 5.43-5.28 5.73.42.36.8 1.08.8 2.18v3.25c0 .3.2.67.8.56A11.5 11.5 0 0 0 12 .7Z"/></svg>
+              查看源码
+            </a>
+          </div>
+        </div>
+        <div>
+          <div class="terminal-card" aria-label="快速启动命令">
+            <div class="terminal-bar">
+              <span>quickstart.sh</span>
+              <span class="terminal-dots"><span></span><span></span><span></span></span>
+            </div>
+            <div class="terminal-body">
+              <div><span class="prompt">$</span> git clone https://github.com/LeeSan1/dumate2api.git</div>
+              <div><span class="prompt">$</span> cd dumate2api</div>
+              <div><span class="prompt">$</span> ./run.sh --port 3067</div>
+              <div class="dim">[dumate-proxy] listening on http://127.0.0.1:3067</div>
+              <div><span class="prompt">$</span> curl 127.0.0.1:3067/healthz</div>
+              <div class="ok">{"ok":true,"service":"dumate-openai-proxy"}</div>
+            </div>
+          </div>
+          <p class="hero-caption">默认端口 3066；被占用时可改用 3067。</p>
+        </div>
+      </section>
+
+      <div class="notice">
+        <span class="notice-icon" aria-hidden="true">i</span>
+        <div><strong>它是什么：</strong>一个运行在你自己电脑上的协议转换层。它复用桌面端登录态，不提供新的免费额度，不绕过会员或风控；只有在本机已登录的 DuMate 保持运行时才可用。</div>
+      </div>
+
+      <div class="doc-grid">
+        <aside class="sidebar" aria-label="文章目录">
+          <p class="sidebar-title">目录</p>
+          <ol class="toc">
+            <li><a href="#overview">项目概览</a></li>
+            <li><a href="#requirements">准备工作</a></li>
+            <li><a href="#quick-start">快速开始</a></li>
+            <li><a href="#verify">接口验证</a></li>
+            <li>
+              <a href="#client">客户端接入</a>
+              <ol class="toc toc-sub">
+                <li><a href="#curl">cURL</a></li>
+                <li><a href="#sdk">OpenAI SDK</a></li>
+                <li><a href="#openclaw">OpenClaw / Magpie</a></li>
+              </ol>
+            </li>
+            <li><a href="#models">模型映射</a></li>
+            <li><a href="#configuration">配置项</a></li>
+            <li><a href="#troubleshooting">常见问题</a></li>
+            <li><a href="#security">安全边界</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ol>
+          <div class="sidebar-meta">
+            更新于 2026-11-16<br>
+            约 8 分钟阅读
+          </div>
+        </aside>
+
+        <article class="content">
+          <header class="content-header">
+            <h2>从桌面登录态到 OpenAI API</h2>
+            <p>用一个小型本地代理，完成请求路径、模型别名和动态鉴权头的转换，同时保留桌面端原本的额度与权限。</p>
+            <div class="article-meta">
+              <span>2026-11-16</span>
+              <span>DuMate 1.0.92 验证</span>
+              <span>Node.js / HTTP</span>
+              <span>MIT</span>
+            </div>
+          </header>
+
+          <details class="mobile-toc">
+            <summary>展开文章目录</summary>
+            <ol class="toc">
+              <li><a href="#overview">项目概览</a></li>
+              <li><a href="#requirements">准备工作</a></li>
+              <li><a href="#quick-start">快速开始</a></li>
+              <li><a href="#verify">接口验证</a></li>
+              <li><a href="#client">客户端接入</a></li>
+              <li><a href="#models">模型映射</a></li>
+              <li><a href="#configuration">配置项</a></li>
+              <li><a href="#troubleshooting">常见问题</a></li>
+              <li><a href="#security">安全边界</a></li>
+              <li><a href="#faq">FAQ</a></li>
+            </ol>
+          </details>
+
+          <section class="article-section" id="overview">
+            <h2>项目概览</h2>
+            <p>百度搭子 DuMate 桌面端内置了可供本机调用的千帆代理接口，但它不是一个可直接交给通用客户端使用的公开 API。这个项目负责在 <span class="inline-code">127.0.0.1</span> 上把它整理成标准的 OpenAI Chat Completions 入口。</p>
+            <div class="architecture" aria-label="请求架构">
+              <div class="arch-node">
+                <span class="label">Client</span>
+                <strong>OpenAI SDK</strong>
+                <span>OpenClaw / Magpie / 脚本</span>
+              </div>
+              <div class="arch-arrow" aria-hidden="true">→</div>
+              <div class="arch-node">
+                <span class="label">Local bridge</span>
+                <strong>DuMate 2API</strong>
+                <span>路径、模型与鉴权转换</span>
+              </div>
+              <div class="arch-arrow" aria-hidden="true">→</div>
+              <div class="arch-node">
+                <span class="label">Desktop</span>
+                <strong>DuMate</strong>
+                <span>qianfanproxy + 登录态</span>
+              </div>
+            </div>
+            <p>代理会通过 <span class="inline-code">ps</span> 发现本机运行的 <span class="inline-code">dumate-main-server</span> 子进程，读取它的动态端口与临时密钥。密钥不会落盘，也不会写进日志；客户端填写的 API Key 只是占位值。</p>
+          </section>
+
+          <section class="article-section" id="requirements">
+            <h2>准备工作</h2>
+            <div class="cards">
+              <div class="card">
+                <h4>1. 安装 DuMate 并登录</h4>
+                <p>桌面端必须保持运行，且当前账户已经登录。关闭客户端后，本机兼容接口也会随之不可用。</p>
+              </div>
+              <div class="card">
+                <h4>2. 安装 Node.js 18+</h4>
+                <p>macOS 可执行 <span class="inline-code">brew install node</span>，Windows 可从 Node.js 官网安装 LTS 版本。</p>
+              </div>
+            </div>
+            <p>项目自身没有 npm 依赖，因此克隆后无需运行 <span class="inline-code">npm install</span>。macOS 和 Linux 通常可以自动发现 DuMate；部分 Windows 构建需要显式提供后端端口和临时密钥。</p>
+          </section>
+
+          <section class="article-section" id="quick-start">
+            <h2>快速开始</h2>
+            <div class="steps">
+              <div class="step"><strong>克隆项目</strong>把仓库下载到一个本地目录。</div>
+              <div class="step"><strong>先启动 DuMate</strong>完成登录，确认客户端可以正常使用。</div>
+              <div class="step"><strong>启动代理</strong>默认使用 3066；若已被占用，改用 3067。</div>
+              <div class="step"><strong>验证模型</strong>访问 <span class="inline-code">/healthz</span> 与 <span class="inline-code">/v1/models</span>。</div>
+            </div>
+            <div class="code-block">
+              <div class="code-head"><span>bash</span><button class="copy-button" type="button">复制</button></div>
+              <pre><code>git clone https://github.com/LeeSan1/dumate2api.git
+cd dumate2api
+
+# 默认端口 3066
+./run.sh
+
+# 如果端口已被其他服务占用
+./run.sh --port 3067</code></pre>
+            </div>
+            <div class="callout">
+              <strong>macOS：</strong>也可以双击 <span class="inline-code">start.command</span>。Windows 使用 <span class="inline-code">npm start</span> 或 <span class="inline-code">run.bat</span>。
+            </div>
+          </section>
+
+          <section class="article-section" id="verify">
+            <h2>接口验证</h2>
+            <p>先检查服务是否由本项目响应。若 <span class="inline-code">/healthz</span> 返回的不是下面这段 JSON，说明端口被其他程序占用了，应换一个端口重启代理。</p>
+            <div class="code-block">
+              <div class="code-head"><span>bash</span><button class="copy-button" type="button">复制</button></div>
+              <pre><code>curl http://127.0.0.1:3067/healthz
+curl http://127.0.0.1:3067/v1/models</code></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-head"><span>expected JSON</span><button class="copy-button" type="button">复制</button></div>
+              <pre><code>{"ok":true,"service":"dumate-openai-proxy"}</code></pre>
+            </div>
+          </section>
+
+          <section class="article-section" id="client">
+            <h2>客户端接入</h2>
+            <p>所有客户端都使用同一组参数：Base URL 指向本机代理，API Key 填任意占位值，模型选择下面四个 <span class="inline-code">dumate-*</span> 别名之一。</p>
+
+            <h3 id="curl">cURL</h3>
+            <div class="code-block">
+              <div class="code-head"><span>bash</span><button class="copy-button" type="button">复制</button></div>
+              <pre><code>curl http://127.0.0.1:3067/v1/chat/completions \
+  -H 'content-type: application/json' \
+  -H 'authorization: Bearer local-test' \
+  -d '{
+    "model": "dumate-deepseek-v41-flash",
+    "messages": [{"role": "user", "content": "只回复 OK"}]
+  }'</code></pre>
+            </div>
+
+            <h3 id="sdk">OpenAI SDK</h3>
+            <div class="code-block">
+              <div class="code-head"><span>javascript</span><button class="copy-button" type="button">复制</button></div>
+              <pre><code>import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "http://127.0.0.1:3067/v1",
+  apiKey: "local-test",
+});
+
+const response = await client.chat.completions.create({
+  model: "dumate-deepseek-v41-flash",
+  messages: [{ role: "user", content: "只回复 OK" }],
+});
+
+console.log(response.choices[0].message.content);</code></pre>
+            </div>
+
+            <h3 id="openclaw">OpenClaw / Magpie</h3>
+            <div class="code-block">
+              <div class="code-head"><span>json</span><button class="copy-button" type="button">复制</button></div>
+              <pre><code>{
+  "baseUrl": "http://127.0.0.1:3067/v1",
+  "apiKey": "local-test",
+  "models": [
+    { "id": "dumate-deepseek-v41-flash" },
+    { "id": "dumate-deepseek-v4-pro" },
+    { "id": "dumate-deepseek-v4-flash-0731" },
+    { "id": "dumate-glm-5" }
+  ]
+}</code></pre>
+            </div>
+            <p>若 Magpie 或 Codex Router 已经在 3066 提供聚合入口，请直接沿用原来的 Base URL，并在模型列表中启用 <span class="inline-code">dumate-*</span> 模型；不要再启动一个监听同端口的实例。</p>
+          </section>
+
+          <section class="article-section" id="models">
+            <h2>模型映射</h2>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>客户端模型名</th><th>DuMate 上游模型</th><th>说明</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="inline-code">dumate-glm-5</span></td><td><span class="inline-code">model-text</span></td><td>上游把 GLM-5 映射为通用文本模型名</td></tr>
+                  <tr><td><span class="inline-code">dumate-deepseek-v4-flash-0731</span></td><td><span class="inline-code">deepseek-v4-flash-0731</span></td><td>Flash 固定版本</td></tr>
+                  <tr><td><span class="inline-code">dumate-deepseek-v4-pro</span></td><td><span class="inline-code">deepseek-v4-pro</span></td><td>DeepSeek Pro</td></tr>
+                  <tr><td><span class="inline-code">dumate-deepseek-v41-flash</span></td><td><span class="inline-code">deepseek-v41-flash</span></td><td>兼容 v4.1 / v4-1 写法</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>带 <span class="inline-code">dumate-local/</span> 前缀的名称也能识别。默认只路由 <span class="inline-code">dumate-</span>、<span class="inline-code">baidu-</span> 与 <span class="inline-code">qianfan-</span> 前缀，避免抢走其他供应商的同名模型。</p>
+          </section>
+
+          <section class="article-section" id="configuration">
+            <h2>配置项</h2>
+            <div class="code-block">
+              <div class="code-head"><span>.env</span><button class="copy-button" type="button">复制</button></div>
+              <pre><code>DUMATE_PROXY_HOST=127.0.0.1
+DUMATE_PROXY_PORT=3067
+DUMATE_UPSTREAM_PREFIX=/api/qianfanproxy/v1
+
+# 自动发现失败时才显式填写；临时密钥不要提交到 Git
+# DUMATE_BACKEND_PORT=12345
+# DUMATE_INAPP_KEY=do-not-commit-this-value</code></pre>
+            </div>
+            <p>可用参数还包括 <span class="inline-code">--route-bare-models</span>、<span class="inline-code">--allow-unknown-models</span>、<span class="inline-code">--process-name</span> 和 <span class="inline-code">--max-body-bytes</span>。运行 <span class="inline-code">./run.sh --help</span> 可查看完整说明。</p>
+          </section>
+
+          <section class="article-section" id="troubleshooting">
+            <h2>常见问题</h2>
+            <div class="faq-item" style="border-top:0">
+              <details>
+                <summary>访问 /healthz 却返回其他服务的 JSON 或 404</summary>
+                <p>默认端口被占用了。本项目默认使用 3066，它可能同时被 Magpie 或 Codex Router 使用。看到 <span class="inline-code">service</span> 不是 <span class="inline-code">dumate-openai-proxy</span> 时，执行 <span class="inline-code">./run.sh --port 3067</span>，并把客户端 Base URL 改成 3067。</p>
+              </details>
+            </div>
+            <div class="faq-item">
+              <details>
+                <summary>503 · dumate_unavailable</summary>
+                <p>DuMate 没有运行、尚未登录，或当前版本不再暴露预期的本机进程。先重启并登录客户端；仍失败时使用环境变量显式提供本机后端端口和临时密钥。</p>
+              </details>
+            </div>
+            <div class="faq-item">
+              <details>
+                <summary>400 · unsupported_model</summary>
+                <p>模型名不在默认前缀范围内，或不是已知别名。先使用 <span class="inline-code">/v1/models</span> 返回的四个名称。确实需要裸模型名时，可设置 <span class="inline-code">DUMATE_ROUTE_BARE_MODELS=1</span>。</p>
+              </details>
+            </div>
+            <div class="faq-item">
+              <details>
+                <summary>Windows 上无法自动发现 DuMate</summary>
+                <p>部分 Windows 构建不支持从进程列表读取临时密钥。请在本机设置 <span class="inline-code">DUMATE_BACKEND_PORT</span> 和 <span class="inline-code">DUMATE_INAPP_KEY</span> 后再启动代理，不要把真实值写入仓库。</p>
+              </details>
+            </div>
+            <div class="faq-item">
+              <details>
+                <summary>能关闭 DuMate 桌面端吗</summary>
+                <p>不能。本机代理依赖桌面端提供的 <span class="inline-code">qianfanproxy</span>，关闭客户端后服务会不可用。当前版本也只使用客户端已登录的那一个账户。</p>
+              </details>
+            </div>
+          </section>
+
+          <section class="article-section" id="security">
+            <h2>安全边界</h2>
+            <div class="callout danger">
+              <strong>不要把代理直接暴露到公网。</strong>默认绑定 <span class="inline-code">127.0.0.1</span>，这既是安全边界，也是项目当前的使用前提。远程访问需要额外增加认证、TLS、限流和访问控制。
+            </div>
+            <ul>
+              <li>代理不包含 DuMate 账户密钥，也不绕过登录、会员权限或风控。</li>
+              <li>客户端传入的 <span class="inline-code">Authorization</span> 会被替换为本地服务所需的鉴权头。</li>
+              <li>动态密钥只留在内存中，不写入文件，也不输出到日志。</li>
+              <li>桌面客户端必须保持运行，关闭后代理不可用。</li>
+              <li>本项目只桥接当前登录账户，不提供账号池或自动签到。</li>
+            </ul>
+          </section>
+
+          <section class="article-section" id="faq">
+            <h2>FAQ</h2>
+            <div class="faq-item" style="border-top:0">
+              <details>
+                <summary>它和官方 DuMate Agent API 是一回事吗？</summary>
+                <p>不是。官方 API 使用 Enterprise API Key，并采用 Agent、Session 与 SSE 事件流；本项目桥接的是本机已登录桌面端里的 OpenAI 兼容路由，只适合当前登录用户的本地调用。</p>
+              </details>
+            </div>
+            <div class="faq-item">
+              <details>
+                <summary>支持流式输出吗？</summary>
+                <p>支持。代理保留请求方式和响应头，并把上游字节流直接回传给客户端；在 OpenAI SDK 里设置 <span class="inline-code">stream: true</span> 即可。</p>
+              </details>
+            </div>
+            <div class="faq-item">
+              <details>
+                <summary>如何更换端口并让客户端生效？</summary>
+                <p>服务端和客户端必须使用同一个端口。例如本地运行 <span class="inline-code">./run.sh --port 3067</span>，客户端 Base URL 就应填写 <span class="inline-code">http://127.0.0.1:3067/v1</span>。</p>
+              </details>
+            </div>
+          </section>
+
+          <footer class="article-footer">
+            <h2>在自己的机器上运行</h2>
+            <p>保留旧版 README 中的本地转发链路，再把教程、排错和页面一起带到 GitHub。</p>
+            <div class="hero-actions">
+              <a class="button primary" href="https://github.com/LeeSan1/dumate2api">打开 GitHub</a>
+              <a class="button" href="#top">回到顶部</a>
+            </div>
+          </footer>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>DuMate 2API · 本机 OpenAI 兼容桥接</span>
+      <span class="footer-links">
+        <a href="https://github.com/LeeSan1/dumate2api">GitHub</a>
+        <a href="https://github.com/LeeSan1/dumate2api/issues">Issues</a>
+        <a href="#security">安全</a>
+      </span>
+    </div>
+  </footer>
+</body>
+</html>
