@@ -25,7 +25,6 @@
         <span>百度搭子 DuMate 反代</span>
       </a>
       <div class="nav-links" data-nav-links>
-        <a href="#critical">注意</a>
         <a href="#quick-start">快速开始</a>
         <a href="#client">客户端接入</a>
         <a href="#models">模型</a>
@@ -45,23 +44,6 @@
 
   <main id="top">
     <div class="page">
-      <section class="critical-notice" id="critical" aria-labelledby="critical-title">
-        <div class="critical-icon" aria-hidden="true">!</div>
-        <div>
-          <h2 id="critical-title">使用前必读</h2>
-          <ul>
-            <li><strong>必须登录并保持 DuMate 桌面客户端运行。</strong>关闭客户端、退出登录或结束后台进程后，代理会返回 <span class="inline-code">503 dumate_unavailable</span>。</li>
-            <li><strong>使用当前账户原有的额度和会员权限。</strong>本项目不提供新的免费额度，不绕过登录、会员限制或风控，也不包含账号池、自动切换账户或自动签到。</li>
-            <li><strong>Windows 需要手动配置本机后端信息。</strong>当前自动发现逻辑依赖 macOS/Linux 的 <span class="inline-code">ps</span>；Windows 请设置 <span class="inline-code">DUMATE_BACKEND_PORT</span> 和 <span class="inline-code">DUMATE_INAPP_KEY</span>。临时密钥通常会在 DuMate 重启后变化。</li>
-            <li><strong>默认只供本机使用。</strong>代理只监听 <span class="inline-code">127.0.0.1</span>，其他电脑和手机不能直接访问，也不能把它当作公网 API。</li>
-            <li><strong>注意默认端口冲突，<span class="inline-code">/healthz</span> 不是 DuMate 就绪检查。</strong><span class="inline-code">3066</span> 可能已被 Magpie 或 Codex Router 占用；当 <span class="inline-code">/healthz</span> 没有返回指定 JSON 时，改用 <span class="inline-code">3067</span>，并同步修改客户端 Base URL。即使返回正常，也只表示反代自身在线，不代表 DuMate 已登录或有可用额度。</li>
-            <li><strong>这是非官方、依赖内部接口的本机桥接。</strong>客户端升级或改版后，<span class="inline-code">qianfanproxy</span> 路径、进程名或动态密钥可能变化。当前验证的是 Chat Completions（含流式）；Images、Audio、Embeddings 等未承诺兼容，也不等同于官方 DuMate Agent API。</li>
-            <li><strong>客户端里的 API Key 只是占位值。</strong>填 <span class="inline-code">local-test</span> 等任意非空值即可。不要保存、提交或公开真实的 <span class="inline-code">DUMATE_INAPP_KEY</span>。</li>
-            <li><strong>当前只公开四个模型别名，<span class="inline-code">/v1/models</span> 不会探测账户权限。</strong>模型是否可用仍取决于 DuMate 版本和账户权限，客户端升级后列表也可能变化。</li>
-          </ul>
-        </div>
-      </section>
-
       <section class="hero" aria-labelledby="hero-title">
         <div>
           <div class="eyebrow">OpenAI 兼容 · 本机运行</div>
@@ -108,7 +90,6 @@
         <aside class="sidebar" aria-label="文章目录">
           <p class="sidebar-title">目录</p>
           <ol class="toc">
-            <li><a href="#critical">使用前必读</a></li>
             <li><a href="#overview">项目概览</a></li>
             <li><a href="#requirements">准备工作</a></li>
             <li><a href="#quick-start">快速开始</a></li>
@@ -148,7 +129,6 @@
           <details class="mobile-toc">
             <summary>展开文章目录</summary>
             <ol class="toc">
-              <li><a href="#critical">使用前必读</a></li>
               <li><a href="#overview">项目概览</a></li>
               <li><a href="#requirements">准备工作</a></li>
               <li><a href="#quick-start">快速开始</a></li>
