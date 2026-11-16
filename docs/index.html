@@ -3,28 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="DuMate 反代：把已登录的 DuMate 桌面端本机接口转换为 OpenAI 兼容 /v1，支持 OpenClaw、Magpie、Codex 和 OpenAI SDK。">
+  <meta name="description" content="百度搭子 DuMate 反代：把已登录的 DuMate 桌面端本机接口转换为 OpenAI 兼容 /v1，支持 OpenClaw、Magpie、Codex 和 OpenAI SDK。">
   <meta name="theme-color" content="#08111d">
-  <meta property="og:title" content="DuMate 反代">
+  <meta property="og:title" content="百度搭子 DuMate 反代">
   <meta property="og:description" content="把已登录的 DuMate 桌面端本机接口转换为 OpenAI 兼容 /v1。">
   <meta property="og:type" content="website">
-  <title>DuMate 反代 · OpenAI 兼容本机接口</title>
+  <title>百度搭子 DuMate 反代 · OpenAI 兼容本机接口</title>
   <link rel="stylesheet" href="assets/style.css">
   <script src="assets/app.js" defer></script>
 </head>
 <body>
   <header class="site-header">
     <nav class="site-nav" aria-label="主导航">
-      <a class="brand" href="#top" aria-label="DuMate 反代首页">
+      <a class="brand" href="#top" aria-label="百度搭子 DuMate 反代首页">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
             <path d="M5 7.5 8.2 3v4.5h7.6V3L19 7.5v7.2a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5V7.5Z"/>
             <path d="M8.5 12.2h.01M15.5 12.2h.01M9 15.2c1.8 1.4 4.2 1.4 6 0"/>
           </svg>
         </span>
-        <span>DuMate 反代</span>
+        <span>百度搭子 DuMate 反代</span>
       </a>
       <div class="nav-links" data-nav-links>
+        <a href="#critical">注意</a>
         <a href="#quick-start">快速开始</a>
         <a href="#client">客户端接入</a>
         <a href="#models">模型</a>
@@ -44,10 +45,27 @@
 
   <main id="top">
     <div class="page">
+      <section class="critical-notice" id="critical" aria-labelledby="critical-title">
+        <div class="critical-icon" aria-hidden="true">!</div>
+        <div>
+          <h2 id="critical-title">使用前必读</h2>
+          <ul>
+            <li><strong>必须登录并保持 DuMate 桌面客户端运行。</strong>关闭客户端、退出登录或结束后台进程后，代理会返回 <span class="inline-code">503 dumate_unavailable</span>。</li>
+            <li><strong>使用当前账户原有的额度和会员权限。</strong>本项目不提供新的免费额度，不绕过登录、会员限制或风控，也不包含账号池、自动切换账户或自动签到。</li>
+            <li><strong>Windows 需要手动配置本机后端信息。</strong>当前自动发现逻辑依赖 macOS/Linux 的 <span class="inline-code">ps</span>；Windows 请设置 <span class="inline-code">DUMATE_BACKEND_PORT</span> 和 <span class="inline-code">DUMATE_INAPP_KEY</span>。临时密钥通常会在 DuMate 重启后变化。</li>
+            <li><strong>默认只供本机使用。</strong>代理只监听 <span class="inline-code">127.0.0.1</span>，其他电脑和手机不能直接访问，也不能把它当作公网 API。</li>
+            <li><strong>注意默认端口冲突，<span class="inline-code">/healthz</span> 不是 DuMate 就绪检查。</strong><span class="inline-code">3066</span> 可能已被 Magpie 或 Codex Router 占用；当 <span class="inline-code">/healthz</span> 没有返回指定 JSON 时，改用 <span class="inline-code">3067</span>，并同步修改客户端 Base URL。即使返回正常，也只表示反代自身在线，不代表 DuMate 已登录或有可用额度。</li>
+            <li><strong>这是非官方、依赖内部接口的本机桥接。</strong>客户端升级或改版后，<span class="inline-code">qianfanproxy</span> 路径、进程名或动态密钥可能变化。当前验证的是 Chat Completions（含流式）；Images、Audio、Embeddings 等未承诺兼容，也不等同于官方 DuMate Agent API。</li>
+            <li><strong>客户端里的 API Key 只是占位值。</strong>填 <span class="inline-code">local-test</span> 等任意非空值即可。不要保存、提交或公开真实的 <span class="inline-code">DUMATE_INAPP_KEY</span>。</li>
+            <li><strong>当前只公开四个模型别名，<span class="inline-code">/v1/models</span> 不会探测账户权限。</strong>模型是否可用仍取决于 DuMate 版本和账户权限，客户端升级后列表也可能变化。</li>
+          </ul>
+        </div>
+      </section>
+
       <section class="hero" aria-labelledby="hero-title">
         <div>
           <div class="eyebrow">OpenAI 兼容 · 本机运行</div>
-          <h1 id="hero-title">DuMate<br><span class="gradient">反代</span></h1>
+          <h1 id="hero-title">百度搭子<br><span class="gradient">DuMate 反代</span></h1>
           <p class="hero-lead">把已登录的 DuMate 桌面端本机接口转换为标准 <span class="inline-code">/v1</span>。OpenClaw、Magpie、Codex、脚本和 OpenAI SDK 可直接接入。</p>
           <div class="badges" aria-label="项目属性">
             <span class="badge">Node 18+</span>
@@ -86,15 +104,11 @@
         </div>
       </section>
 
-      <div class="notice">
-        <span class="notice-icon" aria-hidden="true">i</span>
-        <div><strong>它是什么：</strong>一个运行在你自己电脑上的协议转换层。它复用桌面端登录态，不提供新的免费额度，不绕过会员或风控；只有在本机已登录的 DuMate 保持运行时才可用。</div>
-      </div>
-
       <div class="doc-grid">
         <aside class="sidebar" aria-label="文章目录">
           <p class="sidebar-title">目录</p>
           <ol class="toc">
+            <li><a href="#critical">使用前必读</a></li>
             <li><a href="#overview">项目概览</a></li>
             <li><a href="#requirements">准备工作</a></li>
             <li><a href="#quick-start">快速开始</a></li>
@@ -134,6 +148,7 @@
           <details class="mobile-toc">
             <summary>展开文章目录</summary>
             <ol class="toc">
+              <li><a href="#critical">使用前必读</a></li>
               <li><a href="#overview">项目概览</a></li>
               <li><a href="#requirements">准备工作</a></li>
               <li><a href="#quick-start">快速开始</a></li>
@@ -159,7 +174,7 @@
               <div class="arch-arrow" aria-hidden="true">→</div>
               <div class="arch-node">
                 <span class="label">Local bridge</span>
-                <strong>DuMate 反代</strong>
+                <strong>百度搭子 DuMate 反代</strong>
                 <span>路径、模型与鉴权转换</span>
               </div>
               <div class="arch-arrow" aria-hidden="true">→</div>
@@ -184,7 +199,7 @@
                 <p>macOS 可执行 <span class="inline-code">brew install node</span>，Windows 可从 Node.js 官网安装 LTS 版本。</p>
               </div>
             </div>
-            <p>项目自身没有 npm 依赖，因此克隆后无需运行 <span class="inline-code">npm install</span>。macOS 和 Linux 通常可以自动发现 DuMate；部分 Windows 构建需要显式提供后端端口和临时密钥。</p>
+            <p>项目自身没有 npm 依赖，因此克隆后无需运行 <span class="inline-code">npm install</span>。macOS 和 Linux 通常可以自动发现 DuMate；Windows 原生运行需要显式提供后端端口和临时密钥。</p>
           </section>
 
           <section class="article-section" id="quick-start">
@@ -330,7 +345,7 @@ DUMATE_UPSTREAM_PREFIX=/api/qianfanproxy/v1
             <div class="faq-item">
               <details>
                 <summary>Windows 上无法自动发现 DuMate</summary>
-                <p>部分 Windows 构建不支持从进程列表读取临时密钥。请在本机设置 <span class="inline-code">DUMATE_BACKEND_PORT</span> 和 <span class="inline-code">DUMATE_INAPP_KEY</span> 后再启动代理，不要把真实值写入仓库。</p>
+                <p>当前自动发现依赖 macOS/Linux 的 <span class="inline-code">ps</span>。Windows 请在本机设置 <span class="inline-code">DUMATE_BACKEND_PORT</span> 和 <span class="inline-code">DUMATE_INAPP_KEY</span> 后再启动代理；DuMate 重启后如密钥变化，需要同步更新。不要把真实值写入仓库。</p>
               </details>
             </div>
             <div class="faq-item">
@@ -392,7 +407,7 @@ DUMATE_UPSTREAM_PREFIX=/api/qianfanproxy/v1
 
   <footer class="footer">
     <div class="footer-inner">
-      <span>DuMate 反代 · OpenAI 兼容本机接口</span>
+      <span>百度搭子 DuMate 反代 · OpenAI 兼容本机接口</span>
       <span class="footer-links">
         <a href="https://github.com/LeeSan1/dumate2api">GitHub</a>
         <a href="https://github.com/LeeSan1/dumate2api/issues">Issues</a>
