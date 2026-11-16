@@ -1,0 +1,16 @@
+{
+  "name": "dumate-openai-proxy",
+  "version": "0.1.0",
+  "description": "Local OpenAI-compatible proxy for the DuMate desktop app",
+  "private": false,
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/smoke.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
